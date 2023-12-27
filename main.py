@@ -3,7 +3,11 @@ import pandas as pd
 from sklearn.decomposition import PCA
 from sklearn.metrics.pairwise import cosine_similarity
 
-app = FastAPI(debug=True)
+app = FastAPI()
+
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
 
 # Cargar los archivos parquet una sola vez al inicio
 archivos_parquet = ['clean_df_ur.parquet', 'clean_df_ui.parquet', 'clean_df_sg.parquet']

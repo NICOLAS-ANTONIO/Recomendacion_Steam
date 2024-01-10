@@ -16,8 +16,8 @@ df_ui = pd.read_parquet('DataSet/' + archivos_parquet[1])
 df_sg = pd.read_parquet('DataSet/' + archivos_parquet[2])
 
 # Preparar los datos para el modelo de recomendación
-combined_df = pd.merge(df_ui[['item_id', 'playtime_forever']], df_sg[['id', 'price']], left_on='item_id', right_on='id')
-game_features = combined_df[['playtime_forever', 'price']]
+combined_df = pd.merge(df_ui[['item_id', 'playtime_forever_log']], df_sg[['id', 'price']], left_on='item_id', right_on='id')
+game_features = combined_df[['playtime_forever_log', 'price']]
 pca = PCA(n_components=2)
 game_features_reduced = pca.fit_transform(game_features)
 

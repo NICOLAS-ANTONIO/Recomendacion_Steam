@@ -41,14 +41,12 @@ async def get_recomendacion_juego(game_id: int):
 
 # Endpoints funciones
 def PlayTimeGenre(genero: str):
-    # Unir df_ui con df_sg
+    genero = genero.lower()  # Convertir el género ingresado a minúsculas
     merged_df = pd.merge(df_ui, df_sg, left_on='item_id', right_on='id')
 
     # Filtrar por género y calcular las horas jugadas por año
-    filtered_df = merged_df[merged_df['genres'].str.contains(genero)]
+    filtered_df = merged_df[merged_df['genres'].str.lower().str.contains(genero)]  # Convertir géneros a minúsculas
     hours_by_year = filtered_df.groupby('release_year')['playtime_forever'].sum()
-
-    # Encontrar el año con más horas jugadas
     max_year = hours_by_year.idxmax()
 
     return {"Año de lanzamiento con más horas jugadas para Género {}".format(genero): max_year}
@@ -58,19 +56,14 @@ async def playtime_genre(genero: str):
     return PlayTimeGenre(genero)
 
 def UserForGenre(genero: str):
-    # Unir df_ui con df_sg
+    genero = genero.lower()  # Convertir el género ingresado a minúsculas
     merged_df = pd.merge(df_ui, df_sg, left_on='item_id', right_on='id')
 
     # Filtrar por género
-    filtered_df = merged_df[merged_df['genres'].str.contains(genero)]
-
-    # Encontrar el usuario con más horas jugadas (en minutos originalmente)
+    filtered_df = merged_df[merged_df['genres'].str.lower().str.contains(genero)]  # Convertir géneros a minúsculas
     top_user = filtered_df.groupby('user_id')['playtime_forever'].sum().idxmax()
-
-    # Horas jugadas por año para el top usuario
-    # Convertimos los minutos a horas dividiendo por 60
     hours_by_year = filtered_df[filtered_df['user_id'] == top_user].groupby('release_year')['playtime_forever'].sum().reset_index()
-    hours_by_year['playtime_forever'] = hours_by_year['playtime_forever'] / 60  # Convertir a horas
+    hours_by_year['playtime_forever'] = hours_by_year['playtime_forever'] / 60
 
     return {"Usuario con más horas jugadas para Género {}".format(genero): top_user, "Horas jugadas": hours_by_year.to_dict('records')}
 
@@ -108,13 +101,12 @@ async def users_worst_developer(año: int):
     return UsersWorstDeveloper(año)
 
 def sentiment_analysis(empresa_desarrolladora: str):
-    # Unir df_ur con df_sg
+    empresa_desarrolladora = empresa_desarrolladora.lower()  # Convertir a minúsculas el nombre del desarrollador ingresado
     merged_df = pd.merge(df_ur, df_sg, left_on='item_id', right_on='id')
 
-    # Filtrar por desarrollador
-    filtered_df = merged_df[merged_df['developer'] == empresa_desarrolladora]
+    # Filtrar por desarrollador, convertir a minúsculas para la comparación
+    filtered_df = merged_df[merged_df['developer'].str.lower() == empresa_desarrolladora]
 
-    # Contar análisis de sentimiento
     sentiment_counts = filtered_df['sentiment_analysis'].value_counts().to_dict()
 
     return {empresa_desarrolladora: {"Negative": sentiment_counts.get(0, 0), "Neutral": sentiment_counts.get(1, 0), "Positive": sentiment_counts.get(2, 0)}}
@@ -122,6 +114,7 @@ def sentiment_analysis(empresa_desarrolladora: str):
 @app.get("/sentiment-analysis/{empresa_desarrolladora}")
 async def get_sentiment_analysis(empresa_desarrolladora: str):
     return sentiment_analysis(empresa_desarrolladora)
+
 
 
 

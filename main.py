@@ -10,7 +10,7 @@ def health_check():
     return {"status": "ok"}
 
 # Cargar los archivos parquet una sola vez al inicio
-archivos_parquet = ['clean_df_ur.parquet', 'clean_df_ui.parquet', 'clean_df_sg.parquet']
+archivos_parquet = ['clean_df_ur.parquet', 'definitivo_df_ui.parquet', 'definitivo_df_sg.parquet']
 df_ur = pd.read_parquet('DataSet/' + archivos_parquet[0])
 df_ui = pd.read_parquet('DataSet/' + archivos_parquet[1])
 df_sg = pd.read_parquet('DataSet/' + archivos_parquet[2])
